@@ -23,7 +23,14 @@ namespace AnalyticsFeature.Application.DTO
                 GeneratedDate = DateTime.UtcNow
             };
             await _repository.AddItemAsync(entity);
-            return new AnalyticsReportDto { Id = entity.Id, Title = entity.Title };
+            return new AnalyticsReportDto 
+            { 
+                Id = entity.Id, 
+                Title = entity.Title,
+                Category = entity.Category,
+                DataJson = entity.DataJson,
+                GeneratedDate = entity.GeneratedDate
+            };
         }
     }
 
@@ -35,7 +42,14 @@ namespace AnalyticsFeature.Application.DTO
         public async Task<PagedResponse<AnalyticsReportDto>> Handle(GetAllReportsRequest request, CancellationToken cancellationToken)
         {
             var (items, count) = await _repository.GetItemsWithCountAsync(x => x.DocumentType == nameof(AnalyticsReport), request, x => x.CreatedOn);
-            return new PagedResponse<AnalyticsReportDto>(items.Select(x => new AnalyticsReportDto { Id = x.Id, Title = x.Title }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
+            return new PagedResponse<AnalyticsReportDto>(items.Select(x => new AnalyticsReportDto 
+            { 
+                Id = x.Id, 
+                Title = x.Title,
+                Category = x.Category,
+                DataJson = x.DataJson,
+                GeneratedDate = x.GeneratedDate
+            }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
         }
     }
 }

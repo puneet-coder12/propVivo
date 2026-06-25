@@ -24,7 +24,16 @@ namespace ContributionsFeature.Application.DTO
                 Status = "Pending"
             };
             await _repository.AddItemAsync(entity);
-            return new ValueContributionDto { Id = entity.Id, Title = entity.Title };
+            return new ValueContributionDto 
+            { 
+                Id = entity.Id, 
+                Title = entity.Title,
+                Description = entity.Description,
+                Category = entity.Category,
+                Points = entity.Points,
+                Status = entity.Status,
+                UserId = entity.UserId
+            };
         }
     }
 
@@ -36,7 +45,16 @@ namespace ContributionsFeature.Application.DTO
         public async Task<PagedResponse<ValueContributionDto>> Handle(GetAllContributionsRequest request, CancellationToken cancellationToken)
         {
             var (items, count) = await _repository.GetItemsWithCountAsync(x => x.DocumentType == nameof(ValueContribution), request, x => x.CreatedOn);
-            return new PagedResponse<ValueContributionDto>(items.Select(x => new ValueContributionDto { Id = x.Id, Title = x.Title }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
+            return new PagedResponse<ValueContributionDto>(items.Select(x => new ValueContributionDto 
+            { 
+                Id = x.Id, 
+                Title = x.Title,
+                Description = x.Description,
+                Category = x.Category,
+                Points = x.Points,
+                Status = x.Status,
+                UserId = x.UserId
+            }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
         }
     }
 }

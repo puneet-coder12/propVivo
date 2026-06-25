@@ -42,6 +42,11 @@ namespace HRMS.Core.Postgres.Repositories
 
         public async Task<T> AddItemAsync(T item)
         {
+            if (string.IsNullOrEmpty(item.Id))
+            {
+                item.Id = GenerateId(item);
+            }
+
             if (_telemetryService != null)
             {
                 var sessionContext = GetSessionContext();

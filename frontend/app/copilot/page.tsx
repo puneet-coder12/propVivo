@@ -1,21 +1,45 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useMutation } from "@apollo/client";
+import { SEND_COPILOT_MESSAGE } from "../../graphql/mutation/copilot";
+
+interface Message {
+  role: string;
+  content: string;
+}
 
 export default function CopilotPage() {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "Hello! I'm your HR Copilot. How can I help you today?" }
   ]);
   const [input, setInput] = useState("");
+  const [conversationId] = useState(() => `conv_${Date.now()}`);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { role: "user", content: input }]);
+  const [sendMessage, { loading }] = useMutation(SEND_COPILOT_MESSAGE);
+
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = input.trim();
+    setMessages(prev => [...prev, { role: "user", content: userMsg }]);
     setInput("");
-    // Mock response
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: "assistant", content: "I'm processing your request about '" + input + "'. How else can I assist?" }]);
-    }, 1000);
+
+    try {
+      const res = await sendMessage({
+        variables: {
+          request: {
+            conversationId,
+            message: userMsg
+          }
+        }
+      });
+      if (res.data?.chat) {
+        const reply = res.data.chat;
+        setMessages(prev => [...prev, { role: reply.role, content: reply.content }]);
+      }
+    } catch (err: any) {
+      setMessages(prev => [...prev, { role: "assistant", content: `Error: ${err.message}` }]);
+    }
   };
 
   return (
@@ -33,19 +57,28 @@ export default function CopilotPage() {
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-slate-50 dark:bg-slate-900/30 text-slate-400 px-4 py-2 rounded-lg text-xs italic">
+                Copilot is thinking...
+              </div>
+            </div>
+          )}
         </div>
         <div className="p-4 border-t border-slate-100 dark:border-slate-700 flex gap-4">
           <input 
             type="text" 
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            disabled={loading}
             placeholder="Ask me anything about HR..."
-            className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-900 dark:text-white"
+            className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-900 dark:text-white disabled:opacity-50"
           />
           <button 
             onClick={handleSend}
-            className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors"
+            disabled={loading}
+            className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 font-semibold"
           >
             Send
           </button>

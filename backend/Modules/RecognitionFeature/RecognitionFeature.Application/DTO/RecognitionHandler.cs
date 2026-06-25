@@ -20,7 +20,15 @@ namespace RecognitionFeature.Application.DTO
                 Category = request.Category
             };
             await _repository.AddItemAsync(entity);
-            return new RecognitionDto { Id = entity.Id, Message = entity.Message };
+            return new RecognitionDto 
+            { 
+                Id = entity.Id, 
+                Message = entity.Message,
+                Category = entity.Category,
+                GiverId = entity.FromUserId,
+                ReceiverId = entity.ToUserId,
+                CreatedOn = entity.CreatedOn ?? DateTime.UtcNow
+            };
         }
     }
     public class GetAllRecognitionsHandler : IRequestHandler<GetAllRecognitionsRequest, PagedResponse<RecognitionDto>>
@@ -30,7 +38,15 @@ namespace RecognitionFeature.Application.DTO
         public async Task<PagedResponse<RecognitionDto>> Handle(GetAllRecognitionsRequest request, CancellationToken cancellationToken)
         {
             var (items, count) = await _repository.GetItemsWithCountAsync(x => true, request, x => x.CreatedOn);
-            return new PagedResponse<RecognitionDto>(items.Select(x => new RecognitionDto { Id = x.Id, Message = x.Message }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
+            return new PagedResponse<RecognitionDto>(items.Select(x => new RecognitionDto 
+            { 
+                Id = x.Id, 
+                Message = x.Message,
+                Category = x.Category,
+                GiverId = x.FromUserId,
+                ReceiverId = x.ToUserId,
+                CreatedOn = x.CreatedOn ?? DateTime.UtcNow
+            }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
         }
     }
 }

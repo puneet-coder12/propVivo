@@ -153,6 +153,10 @@ export default function TeamPage() {
       return;
     }
 
+    const isoDateOfJoining = formData.dateOfJoining
+      ? new Date(formData.dateOfJoining).toISOString()
+      : null;
+
     try {
       if (editingMember) {
         // Edit Mode
@@ -167,7 +171,7 @@ export default function TeamPage() {
                 phone: formData.phone,
                 designation: formData.designation,
                 department: formData.department,
-                dateOfJoining: formData.dateOfJoining,
+                dateOfJoining: isoDateOfJoining,
                 role: formData.role,
                 status: formData.status,
                 country: formData.country
@@ -194,7 +198,7 @@ export default function TeamPage() {
                 phone: formData.phone,
                 designation: formData.designation,
                 department: formData.department,
-                dateOfJoining: formData.dateOfJoining,
+                dateOfJoining: isoDateOfJoining,
                 role: formData.role,
                 status: formData.status,
                 country: formData.country

@@ -6,6 +6,13 @@ using PayrollFeature.Domain;
 using ExpensesFeature.Domain;
 using AnnouncementsFeature.Domain;
 using TodoFeature.Domain;
+using PerformanceFeature.Domain;
+using TrainingFeature.Domain;
+using RecognitionFeature.Domain;
+using ContributionsFeature.Domain;
+using RecruitmentFeature.Domain;
+using AnalyticsFeature.Domain;
+using OnboardingFeature.Domain;
 using HRMS.Core.Postgres.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -363,6 +370,213 @@ namespace HRMS.API
                         FileUrl = "/documents/employment_agreement_alice.pdf",
                         Category = "employment",
                         Status = "verified"
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 9. Seed Goals
+            if (!context.Set<Goal>().Any() && alice != null)
+            {
+                context.Set<Goal>().AddRange(
+                    new Goal
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Title = "Increase Sales by 20%",
+                        Description = "Acquire new corporate clients and upsell existing licenses.",
+                        Category = "Sales",
+                        Weight = 40,
+                        TargetValue = 100,
+                        CurrentValue = 75,
+                        Status = "In-Progress",
+                        StartDate = DateTime.UtcNow.AddMonths(-1),
+                        EndDate = DateTime.UtcNow.AddMonths(3)
+                    },
+                    new Goal
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Title = "Deploy GraphQL Endpoint",
+                        Description = "Complete frontend-backend migration to Apollo Client.",
+                        Category = "Engineering",
+                        Weight = 60,
+                        TargetValue = 100,
+                        CurrentValue = 100,
+                        Status = "Completed",
+                        StartDate = DateTime.UtcNow.AddMonths(-2),
+                        EndDate = DateTime.UtcNow
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 10. Seed Training Modules
+            if (!context.Set<TrainingModule>().Any())
+            {
+                context.Set<TrainingModule>().AddRange(
+                    new TrainingModule
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Advanced React Patterns",
+                        Description = "Master hooks, context, and rendering performance optimization.",
+                        Category = "Engineering",
+                        ContentUrl = "https://react.dev",
+                        IsMandatory = true
+                    },
+                    new TrainingModule
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Information Security Basics",
+                        Description = "Understand phishing prevention, secure coding, and key management.",
+                        Category = "Compliance",
+                        ContentUrl = "https://owasp.org",
+                        IsMandatory = true
+                    },
+                    new TrainingModule
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Effective Team Leadership",
+                        Description = "Best practices in feedback loops, MediatR handlers, and mentorship.",
+                        Category = "Management",
+                        ContentUrl = "https://microsoft.com",
+                        IsMandatory = false
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 11. Seed Recognitions
+            if (!context.Set<Recognition>().Any() && alice != null && bob != null)
+            {
+                context.Set<Recognition>().AddRange(
+                    new Recognition
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FromUserId = bob.EmployeeId,
+                        ToUserId = alice.EmployeeId,
+                        Message = "Amazing work on the Q2 reports! Your attention to detail is unmatched.",
+                        Category = "Collaboration",
+                        CreatedOn = DateTime.UtcNow.AddHours(-2)
+                    },
+                    new Recognition
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FromUserId = alice.EmployeeId,
+                        ToUserId = bob.EmployeeId,
+                        Message = "Outstanding product roadmap design. Clear direction and milestone layouts.",
+                        Category = "Innovation",
+                        CreatedOn = DateTime.UtcNow.AddDays(-1)
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 12. Seed Value Contributions
+            if (!context.Set<ValueContribution>().Any() && alice != null)
+            {
+                context.Set<ValueContribution>().AddRange(
+                    new ValueContribution
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Title = "Automated QA Pipeline",
+                        Description = "Introduced Playwright tests, reducing release regressions by 80%.",
+                        Category = "Innovation",
+                        Points = 500,
+                        Status = "Approved"
+                    },
+                    new ValueContribution
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Title = "Mentored 3 Junior Developers",
+                        Description = "Conducted weekly code review clinics and architecture pair sessions.",
+                        Category = "Mentorship",
+                        Points = 300,
+                        Status = "Approved"
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 13. Seed Job Postings
+            if (!context.Set<JobPosting>().Any())
+            {
+                context.Set<JobPosting>().AddRange(
+                    new JobPosting
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Senior Software Engineer",
+                        Description = "Lead the design and development of frontend frameworks using Next.js and Tailwind CSS.",
+                        Department = "Engineering",
+                        Location = "Remote",
+                        Status = "Active"
+                    },
+                    new JobPosting
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Product Manager",
+                        Description = "Drive roadmap prioritization, user stories, and feature definitions.",
+                        Department = "Product",
+                        Location = "San Francisco, CA",
+                        Status = "Active"
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 14. Seed Analytics Reports
+            if (!context.Set<AnalyticsReport>().Any())
+            {
+                context.Set<AnalyticsReport>().AddRange(
+                    new AnalyticsReport
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Q2 Attendance Trends",
+                        Category = "Attendance",
+                        DataJson = "{\"averageWorkHours\": 8.2, \"presentRatePercent\": 96.5, \"lateCount\": 12}",
+                        GeneratedDate = DateTime.UtcNow.AddDays(-1)
+                    },
+                    new AnalyticsReport
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Title = "Headcount Distribution",
+                        Category = "Organization",
+                        DataJson = "{\"Engineering\": 8, \"Product\": 3, \"Design\": 2, \"HR\": 2}",
+                        GeneratedDate = DateTime.UtcNow.AddDays(-2)
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            // 15. Seed Onboarding Tasks
+            if (!context.Set<OnboardingTask>().Any() && alice != null)
+            {
+                context.Set<OnboardingTask>().AddRange(
+                    new OnboardingTask
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Phase = "Pre-joining",
+                        Title = "Upload Signed Offer Letter",
+                        IsCompleted = true
+                    },
+                    new OnboardingTask
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Phase = "Day 1",
+                        Title = "Set up Workstation and Git Configuration",
+                        IsCompleted = false
+                    },
+                    new OnboardingTask
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = alice.Id,
+                        Phase = "Week 1",
+                        Title = "Complete compliance documentation & setup billing",
+                        IsCompleted = false
                     }
                 );
                 context.SaveChanges();

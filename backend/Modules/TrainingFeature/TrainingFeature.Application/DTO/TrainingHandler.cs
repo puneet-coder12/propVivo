@@ -24,7 +24,15 @@ namespace TrainingFeature.Application.DTO
                 IsMandatory = request.IsMandatory
             };
             await _repository.AddItemAsync(entity);
-            return new TrainingModuleDto { Id = entity.Id, Title = entity.Title };
+            return new TrainingModuleDto 
+            { 
+                Id = entity.Id, 
+                Title = entity.Title,
+                Description = entity.Description,
+                Category = entity.Category,
+                ContentUrl = entity.ContentUrl,
+                IsMandatory = entity.IsMandatory
+            };
         }
     }
 
@@ -36,7 +44,15 @@ namespace TrainingFeature.Application.DTO
         public async Task<PagedResponse<TrainingModuleDto>> Handle(GetAllTrainingModulesRequest request, CancellationToken cancellationToken)
         {
             var (items, count) = await _repository.GetItemsWithCountAsync(x => x.DocumentType == nameof(TrainingModule), request, x => x.CreatedOn);
-            return new PagedResponse<TrainingModuleDto>(items.Select(x => new TrainingModuleDto { Id = x.Id, Title = x.Title }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
+            return new PagedResponse<TrainingModuleDto>(items.Select(x => new TrainingModuleDto 
+            { 
+                Id = x.Id, 
+                Title = x.Title,
+                Description = x.Description,
+                Category = x.Category,
+                ContentUrl = x.ContentUrl,
+                IsMandatory = x.IsMandatory
+            }).ToList(), count, request.PageCriteria.Skip / request.PageCriteria.PageSize + 1, request.PageCriteria.PageSize);
         }
     }
 }

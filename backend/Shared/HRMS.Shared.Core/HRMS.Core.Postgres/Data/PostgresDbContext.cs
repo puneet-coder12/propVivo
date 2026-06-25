@@ -1,6 +1,7 @@
 using HRMS.Core.Postgres.Interfaces;
 using HRMS.Core.Postgres.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace HRMS.Core.Postgres.Data
 {
